@@ -133,6 +133,20 @@ let transactions = [
   },
 ];
 
+function get_all_transactions() {
+  return transactions;
+}
+
+function get_transactions_by_acc_no(accountNo) {
+  let transactionsArray = [];
+  for (i = 0; i < transactions.length; i++) {
+    if (transactions[i].account_no == accountNo)
+      transactionsArray.push(transactions[i]);
+  }
+
+  return transactionsArray;
+}
+
 module.exports = {
   add_user,
   get_all_users,
@@ -142,4 +156,6 @@ module.exports = {
   add_acc,
   // get_acc_by_accNum,
   del_acc_by_accNo,
+  get_all_transactions,
+  get_transactions_by_acc_no,
 };

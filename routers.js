@@ -80,4 +80,14 @@ router.delete("/accounts/delete", (request, response) => {
 
 // ------------------- TRANSACTIONS -------------------
 
+router.get("/transactions/all", (request, response) => {
+  let transactions = database.get_all_transactions();
+  response.send(transactions);
+});
+
+router.get("transactions/by-acc-no", (request, response) => {
+  let transactions = database.get_transactions_by_acc_no(request.query.acc_no);
+  response.send(transactions);
+});
+
 module.exports = { router };
