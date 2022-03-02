@@ -1,0 +1,26 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Backend module for PC2.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qihao27/nodejs.git"
+  },
+  "author": "Qihao",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/qihao27/nodejs/issues"
+  },
+  "homepage": "https://github.com/qihao27/nodejs#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "express-openid-connect": "^2.7.1",
+    "mysql": "^2.18.1"
+  }
+}
