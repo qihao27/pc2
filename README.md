@@ -7,6 +7,6 @@ Node.js backend for NUSmoney app, included Auth0 integration and sample data in 
 **authdemo.js**: example code to use Auth0 to require a logged in user to make a request  
 **main2.js**: more complex main program relying on functions in router.js  
 **routers.js**: request handling requiring logged in user  
-**Procfile**: required so Heroku knows which app to run on startup
-**/reference**: materials from https://github.com/jscheele/fintechsg-backend-with-auth
+**Procfile**: required so Heroku knows which app to run on startup  
+**/reference**: materials from https://github.com/jscheele/fintechsg-backend-with-auth  
 **/sample**: sample html designs
