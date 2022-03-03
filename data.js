@@ -87,13 +87,14 @@ function get_accs_by_holder(accHolder) {
   }
   return accountArray;
 }
-function get_acc_by_accNo(accountNo) {
+function get_acc_by_acc_no(accountNo) {
   for (i = 0; i < accounts.length; i++) {
     if (accounts[i].account_no.toString() == accountNo.toString()) {
       let account = accounts[i];
       return account;
     }
   }
+  console.log(account);
 }
 
 function del_acc_by_accNo(accountNo) {
@@ -154,7 +155,7 @@ module.exports = {
   get_all_accounts,
   get_accs_by_holder,
   add_acc,
-  // get_acc_by_accNum,
+  get_acc_by_acc_no,
   del_acc_by_accNo,
   get_all_transactions,
   get_transactions_by_acc_no,

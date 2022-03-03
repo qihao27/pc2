@@ -61,8 +61,10 @@ router.get("/accounts/by-accholder", (request, response) => {
 });
 
 router.get("/accounts/by-acc-no", (request, response) => {
-  let accounts = database.get_accs_by_holder(request.query.acc_no);
+  let accounts = database.get_acc_by_acc_no(request.query.acc_no);
   response.send(accounts);
+
+  console.log(accounts);
 }); // still not working
 
 // Define a POST API to add a new account to database
