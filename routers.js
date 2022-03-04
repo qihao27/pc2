@@ -29,7 +29,7 @@ router.get('/', (request, response) => {
 
 // GET API with path "/home"
 router.get("/home", requiresAuth(), (request, response) => {
-  response.send(__dirname);
+  response.send("Welcome!");
 });
 
 router.get("/index", requiresAuth(), (request, response) => {
