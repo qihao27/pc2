@@ -33,6 +33,7 @@ router.get("/home", requiresAuth(), (request, response) => {
 });
 
 router.get("/index", requiresAuth(), (request, response) => {
+  console.log(__dirname);
   response.sendFile(path.join(__dirname + '/index.html'));
 });
 
