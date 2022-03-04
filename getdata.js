@@ -1,5 +1,5 @@
 const b1 = document.getElementById("b1");
-const url = "https://fintech-group4.herokuapp.com/";
+const url = "https://fintech-group4.herokuapp.com";
 // const url = "http://localhost:3000";
 b1.addEventListener("click", () => {
   let user_id = document.getElementById("inputbox").value;
