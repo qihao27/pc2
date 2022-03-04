@@ -23,7 +23,7 @@ router.use('/public', express.static(path.join(__dirname, 'public')));
 // ------------------- Auth0 -------------------
 router.get('/', (request, response) => {
   if (request.oidc.isAuthenticated()) {
-    response.redirect("/home");
+    response.redirect("/index");
   } else {
     response.send('Logged out');
   }
