@@ -13,6 +13,4 @@ connection.connect((error) => {
     (error) ? console.log(error) : console.log("Connected to MySQL!");
 });
 
-connection.query("select * from books", (error, result) => {
-    (error) ? console.log(error) : console.log(result);
-});
+module.exports = { connection };

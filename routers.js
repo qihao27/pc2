@@ -1,9 +1,10 @@
 const express = require("express");
-const database = require("./data");
 const path = require("path");
 let router = express.Router();
 
 require('dotenv').config();
+const { connection } = require("./database");
+
 const { auth, requiresAuth } = require('express-openid-connect');
 router.use(
   auth({
@@ -31,27 +32,46 @@ router.get("/home", requiresAuth(), (request, response) => {
   response.send("Welcome!");
 });
 
-router.get("/sample", requiresAuth(), (request, response) => {
-  response.sendFile(path.join(__dirname+'/samples/sample.html'));
+router.get("/index", requiresAuth(), (request, response) => {
+  response.sendFile(path.join(__dirname + '/index.html'));
 });
 
 // ------------------- USERS -------------------
 // GET all users
 router.get("/users/all", requiresAuth(), (request, response) => {
-  let users = database.get_all_users();
-  response.send(users);
+  connection.query("select * from user", (error, result) => {
+    if (error) {
+      console.log(error);
+      response.status(500).send("Something went wrong...");
+    } else {
+      response.status(200).send(result);
+    }
+  });
 });
 
 // GET user based on uid passed in the request
 router.get("/users/by-uid", requiresAuth(), (request, response) => {
-  let users = database.get_user_by_user_id(request.query.uid);
-  response.send(users);
+  connection.query(`select * from user where uid=${request.query.uid}`, (error, result) => {
+    if (error) {
+      console.log(error);
+      response.status(500).send("Something went wrong...");
+    } else {
+      (result.length == 0) ? response.status(404).send("user not found") : response.status(200).send(result);
+    }
+  });
 });
 
 // Define a POST API to add a new user to database
 router.post("/users/add", requiresAuth(), (request, response) => {
-  let user = database.add_user(request.body.user);
-  response.send("user added.");
+  connection.query(`insert into user (first_name, last_name, email) 
+    values ("${request.body.first_name}", "${request.body.last_name}", "${request.body.email}")`, (error, result) => {
+    if (error) {
+      console.log(error);
+      response.status(500).send("Something went wrong...");
+    } else {
+      response.status(200).send("User added to the database!");
+    }
+  });
 });
 
 // ------------------- ACCOUNTS -------------------
