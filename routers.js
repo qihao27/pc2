@@ -29,11 +29,10 @@ router.get('/', (request, response) => {
 
 // GET API with path "/home"
 router.get("/home", requiresAuth(), (request, response) => {
-  response.send("Welcome!");
+  response.send(__dirname);
 });
 
 router.get("/index", requiresAuth(), (request, response) => {
-  console.log(__dirname);
   response.sendFile(path.join(__dirname + '/index.html'));
 });
 
