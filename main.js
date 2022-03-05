@@ -16,5 +16,5 @@ app.use(router);
 const port = process.env.PORT || 3000;
 app.listen(port, (errors) => {
     if (errors) console.log(errors);
-    else console.log("Server started on port 3000.");
+    else console.log("Server started on port " + port);
 })
