@@ -34,7 +34,7 @@ router.get("/home", requiresAuth(), (request, response) => {
   response.send("Welcome!");
 });
 
-router.get("/index", requiresAuth(), (request, response) => {
+router.get("/index", (request, response) => {
   response.sendFile(path.join(__dirname + '/index.html'));
 });
 
