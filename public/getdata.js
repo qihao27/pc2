@@ -21,6 +21,8 @@ const url = "http://localhost:3000";
 
 // b1 = deposit | b2 = buy | b3 = sell | b4 = transaction hist
 
+
+
 const b4 = document.getElementById("b4");
 b4.addEventListener("click", () => {
   let user_id = 922;
