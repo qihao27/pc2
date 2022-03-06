@@ -2,10 +2,12 @@ const express = require("express");
 const path = require("path");
 let router = express.Router();
 
-require('dotenv').config();
+require("dotenv").config();
 const { connection } = require("./database");
 
-const { auth, requiresAuth } = require('express-openid-connect');
+const { auth, requiresAuth } = require("express-openid-connect");
+const { connect } = require("http2");
+const query = require("express/lib/middleware/query");
 router.use(
   auth({
     authRequired: false,
@@ -18,14 +20,14 @@ router.use(
   })
 );
 
-router.use('/public', express.static(path.join(__dirname, 'public')));
+router.use("/public", express.static(path.join(__dirname, "public")));
 
 // ------------------- Auth0 -------------------
-router.get('/', (request, response) => {
+router.get("/", (request, response) => {
   if (request.oidc.isAuthenticated()) {
     response.redirect("/index");
   } else {
-    response.send('Logged out');
+    response.send("Logged out");
   }
 });
 
@@ -35,13 +37,13 @@ router.get("/home", requiresAuth(), (request, response) => {
 });
 
 router.get("/index", (request, response) => {
-  response.sendFile(path.join(__dirname + '/index.html'));
+  response.sendFile(path.join(__dirname + "/index.html"));
 });
 
 // ------------------- USERS -------------------
 // GET all users
 router.get("/users/all", requiresAuth(), (request, response) => {
-  connection.query("select * from user", (error, result) => {
+  connection.query("select * from users", (error, result) => {
     if (error) {
       console.log(error);
       response.status(500).send("Something went wrong...");
@@ -53,27 +55,35 @@ router.get("/users/all", requiresAuth(), (request, response) => {
 
 // GET user based on uid passed in the request
 router.get("/users/by-uid", requiresAuth(), (request, response) => {
-  connection.query(`select * from user where uid=${request.query.uid}`, (error, result) => {
-    if (error) {
-      console.log(error);
-      response.status(500).send("Something went wrong...");
-    } else {
-      (result.length == 0) ? response.status(404).send("user not found") : response.status(200).send(result);
+  connection.query(
+    `select * from users where uid=${request.query.uid}`,
+    (error, result) => {
+      if (error) {
+        console.log(error);
+        response.status(500).send("Something went wrong...");
+      } else {
+        result.length == 0
+          ? response.status(404).send("user not found")
+          : response.status(200).send(result);
+      }
     }
-  });
+  );
 });
 
 // Define a POST API to add a new user to database
 router.post("/users/add", requiresAuth(), (request, response) => {
-  connection.query(`insert into user (first_name, last_name, email) 
-    values ("${request.body.first_name}", "${request.body.last_name}", "${request.body.email}")`, (error, result) => {
-    if (error) {
-      console.log(error);
-      response.status(500).send("Something went wrong...");
-    } else {
-      response.status(200).send("User added to the database!");
+  connection.query(
+    `insert into users (first_name, last_name, email) 
+    values ("${request.body.first_name}", "${request.body.last_name}", "${request.body.email}")`,
+    (error, result) => {
+      if (error) {
+        console.log(error);
+        response.status(500).send("Something went wrong...");
+      } else {
+        response.status(200).send("User added to the database!");
+      }
     }
-  });
+  );
 });
 
 // ------------------- ACCOUNTS -------------------
@@ -115,9 +125,56 @@ router.get("/transactions/all", requiresAuth(), (request, response) => {
   response.send(transactions);
 });
 
-router.get("transactions/by-acc-no", requiresAuth(), (request, response) => {
-  let transactions = database.get_transactions_by_acc_no(request.query.acc_no);
-  response.send(transactions);
-});
+router.get(
+  "/transactions/by-account-id",
+  requiresAuth(),
+  (request, response) => {
+    connection.query(
+      `select type, amount, date(transaction_date) as transaction_date, account_id from transactions where account_id=${request.query.account_id}`,
+      (error, result) => {
+        if (error) {
+          console.log(error);
+          response.status(500).send("Something went wrong...");
+        } else {
+          result.length == 0
+            ? response.status(404).send("user not found")
+            : response.status(200).send(result);
+        }
+      }
+    );
+  }
+);
+
+// POST API for deposits
+router.post(
+  "/transactions/by-deposit-amt",
+  requiresAuth(),
+  (request, response) => {
+    connection.query(
+      `
+    INSERT INTO transactions(type, amount, transaction_date, account_id)
+
+    VALUES
+         ('080', ${request.query.amount} , '2022-03-06' , 922
+         `,
+      (error, result) => {
+        if (error) {
+          console.log(error);
+          response.status(500).send("Something went wrong...");
+        } else {
+          result.length == 0
+            ? response.status(404).send("Please input deposit amount.")
+            : response.status(200).send(result);
+        }
+      }
+    );
+  }
+);
+
+//`INSERT INTO
+//         transactions(type, amount, transaction_data, account_id)
+//       VALUES
+//         (10, ${request.query.amount} , 2022-03-06 , ${request.query.user - id});
+//       `, // HC
 
 module.exports = { router };

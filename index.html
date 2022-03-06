@@ -17,25 +17,21 @@
   <h2>NUS Money</h2>
 
   <div class="container">
-    <h4>Your Balance</h4>
-    <h1 id="balance">$0.00</h1> <!-- connect to backend -->
+    
     
 
     <div class="inc-exp-container">
       <div>
-        <h4>Deposit</h4>
+        <h4>DEPOSIT</h4>
         <p id="deposit" class="money plus">+$0.00</p>
       </div>
       <div>
-        <h4>Loan</h4>
-        <p id="loan" class="money minus">-$0.00</p>
+        <h4>INVESTMENT</h4>
+        <p id="investment" class="money minus">-$0.00</p>
       </div>
     </div>
 
-    <button id="b4" class="btn btn-primary">account details</button>
-    <div class="mypanel">
-      
-    </div>
+  
     
     <h3>Pie Chart</h3>
     <ul id="list" class="list">
@@ -50,7 +46,7 @@
         <!-- <label for="custname">Deposit money</label> -->
         <input
           type="text"
-          id="custname"
+          id="deposit_amount"
           placeholder="Insert amount to deposit..."
         />
       </div>
@@ -62,18 +58,25 @@
         <!-- <label for="custname">Deposit money</label> -->
         <input
           type="text"
-          id="custname"
+          id="investment_amount"
           placeholder="Insert amount to invest..."
         />
       </div>
       <button id="b2" class="btn">Buy</button>
+      
       <button id="b3" class="btn">Sell</button>
-
-      <div class="form-control">
-        <p id="reco" class="blinking"></p>
-      </div>
+      
+      
+      
+      <!-- <div class="form-control">
+        
+      </div> -->
     </form>
   </div>
+    <div class="container"><button id="b4" class="btn">Transaction History</button>
+    <div class="mypanel"></div></div>
+    
+
 
   <script src="public/getdata.js"></script>
 </body>
