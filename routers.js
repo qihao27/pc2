@@ -146,16 +146,16 @@ router.get(
 );
 
 // POST API for deposits
-router.post(
+router.get(
   "/transactions/by-deposit-amt",
   requiresAuth(),
   (request, response) => {
     connection.query(
       `
-    INSERT INTO transactions(type, amount, transaction_date, account_id)
-
+    INSERT INTO 
+        transactions(type, amount, transaction_date, account_id)
     VALUES
-         ('080', ${request.query.amount} , '2022-03-06' , 922
+         ('080', ${request.query.amount} , '2022-03-06' , 922)
          `,
       (error, result) => {
         if (error) {

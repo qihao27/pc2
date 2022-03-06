@@ -51,7 +51,9 @@ b1.addEventListener("click", () => {
   $.getJSON(`${url}/transactions/by-deposit-amt?amount=${amount}`, () => {
     // console.log(data);
 
-    let code = "Funds deposited.";
+    let code = "<ul>";
+    code += "Funds deposited.";
+    code += "</ul>";
 
     $(".mypanel").html(code);
   });
