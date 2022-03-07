@@ -150,12 +150,20 @@ router.get(
   "/transactions/by-deposit-amt",
   requiresAuth(),
   (request, response) => {
+
+    var currentdate = new Date(); 
+
+    var datetime = "";
+    datetime += currentdate.getFullYear() + "-";
+    datetime += currentdate.getMonth() + 1 + "-";
+    datetime += currentdate.getDate();
+
     connection.query(
       `
     INSERT INTO 
         transactions(type, amount, transaction_date, account_id)
     VALUES
-         ('080', ${request.query.amount} , '2022-03-06' , 922)
+         ('080', ${request.query.amount} , '${datetime}' , 922)
          `,
       (error, result) => {
         if (error) {
