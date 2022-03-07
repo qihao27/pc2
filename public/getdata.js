@@ -61,7 +61,8 @@ b4.addEventListener("click", () => {
       // 6 March: need to change format for transactions history
       //
       data.forEach((datapoint) => {
-        code += `<li> Date: ${datapoint.transaction_date} 
+        let date = datapoint.transaction_date.substring(0,10);
+        code += `<li> Date: ${date} 
                     | Amount: $${datapoint.amount}
                     </li>`;
       });

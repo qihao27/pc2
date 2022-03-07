@@ -110,6 +110,11 @@ input[type='number'] {
   width: 100%;
 }
 
+.mypanel
+{
+  font-size: 15px;
+}
+
 .btn:focus,
 .delete-btn:focus {
   outline: 0;
