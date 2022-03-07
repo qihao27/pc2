@@ -23,35 +23,32 @@ const url = "http://localhost:3000";
 //});
 
 // b1 = deposit | b2 = buy | b3 = sell | b4 = transaction hist
-google.charts.load('current', {'packages':['corechart']});
+google.charts.load("current", { packages: ["corechart"] });
 google.charts.setOnLoadCallback(drawChart);
 
 function drawChart() {
+  //console.log(parseInt(deposiitbalance.innerText.value));
 
-      //console.log(parseInt(deposiitbalance.innerText.value));
+  var data = google.visualization.arrayToDataTable([
+    ["Item", "$"],
+    ["Deposit", parseInt(init_deposit_balance)],
+    ["Investment", parseInt(init_investment_balance)],
+  ]);
 
-       var data = google.visualization.arrayToDataTable([
-        ['Item', '$'],
-        ['Deposit',    parseInt(init_deposit_balance)],
-        ['Investment',  parseInt(init_investment_balance)]
-        ]);
-      
+  var options = {
+    title: "",
+  };
 
-        var options = {
-        title: ''
-      };
+  var chart = new google.visualization.PieChart(
+    document.getElementById("piechart")
+  );
 
-      var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+  chart.draw(data, options);
+}
 
-    chart.draw(data, options);
-  }
-
-
-
+// transaction history
 const b4 = document.getElementById("b4");
 b4.addEventListener("click", () => {
-  
-
   $.getJSON(
     `${url}/transactions/by-account-id?account_id=${user_id}`,
     (data) => {
@@ -61,7 +58,7 @@ b4.addEventListener("click", () => {
       // 6 March: need to change format for transactions history
       //
       data.forEach((datapoint) => {
-        let date = datapoint.transaction_date.substring(0,10);
+        let date = datapoint.transaction_date.substring(0, 10);
         code += `<li> Date: ${date} 
                     | Amount: $${datapoint.amount}
                     </li>`;
@@ -91,14 +88,12 @@ b1.addEventListener("click", () => {
   init();
 });
 
-function init() 
-{
+function init() {
   let temp_amount = 0.0;
 
   $.getJSON(
     `${url}/transactions/by-account-id?account_id=${user_id}`,
-    (data) => 
-    {
+    (data) => {
       console.log(data);
       // 6 March: need to change format for transactions history
       //
@@ -107,17 +102,35 @@ function init()
         //console.log(parseFloat(`${datapoint.amount}`));
         temp_amount += parseFloat(`${datapoint.amount}`);
         //console.log("temp_amount= " + temp_amount);
-        
       });
       init_deposit_balance = temp_amount.toFixed(2);
       deposiitbalance.innerText = "$" + temp_amount.toFixed(2);
     }
   );
-  
+
   drawChart();
+
+  //b2 = buying
+  const b2 = document.getElementById("b2");
+  b2.addEventListener("click", () => {
+    console.log("clicked");
+    let user_id = 922;
+    let amount = document.getElementById("investment_amount").value;
+    $.getJSON(`${url}/transactions/buy?amount=${amount}`, () => {
+      // console.log(data);
+
+      let code = "<ul>";
+      code += "Investment made.";
+      code += "</ul>";
+
+      $(".mypanel").html(code);
+    });
+
+    init();
+  });
+
   //console.log("temp_amount= " + temp_amount);
 
-  
   //investment.innerText = `$${init_investment_balance}`;
 }
 

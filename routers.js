@@ -150,8 +150,7 @@ router.get(
   "/transactions/by-deposit-amt",
   requiresAuth(),
   (request, response) => {
-
-    var currentdate = new Date(); 
+    var currentdate = new Date();
 
     var datetime = "";
     datetime += currentdate.getFullYear() + "-";
@@ -178,6 +177,34 @@ router.get(
     );
   }
 );
+
+// POST API for buy
+router.get("/transactions/buy", requiresAuth(), (request, response) => {
+  var currentdate = new Date();
+
+  var datetime = "";
+  datetime += currentdate.getFullYear() + "-";
+  datetime += currentdate.getMonth() + 1 + "-";
+  datetime += currentdate.getDate();
+
+  let buyAmt = request.query.amount;
+
+  connection.query(
+    `INSERT INTO transactions(type, amount, transaction_date, account_id) VALUES ('010', -${buyAmt}, '${datetime}', 922)`,
+    (error, result) => {
+      if (error) {
+        console.log(error);
+        response.status(500).send("Something went wrong...");
+      } else {
+        result.length == 0
+          ? response.status(404).send("Please input amount to buy.")
+          : response.status(200).send(result);
+      }
+    }
+  );
+});
+
+// POST API for sell
 
 //`INSERT INTO
 //         transactions(type, amount, transaction_data, account_id)
