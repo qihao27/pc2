@@ -69,6 +69,7 @@ b4.addEventListener("click", () => {
   init();
 });
 
+// b1 = deposit
 const b1 = document.getElementById("b1");
 b1.addEventListener("click", () => {
   let user_id = 922;
@@ -79,7 +80,7 @@ b1.addEventListener("click", () => {
     // code += "Funds deposited.";
     // code += "</ul>";
     // $(".mypanel").html(code);
-    // alert(`You have successfully deposited $${amount}.`);
+    alert(`You have successfully deposited $${amount}.`);
   });
 
   init();
@@ -100,7 +101,7 @@ b2.addEventListener("click", () => {
 
     $(".mypanel").html(code);
   });
-  alert(`Hello, you have made an investment of ${amount}`);
+  alert(`You have made an investment of ${amount}`);
   init();
 });
 
@@ -119,7 +120,7 @@ b3.addEventListener("click", () => {
 
     $(".mypanel").html(code);
   });
-  alert(`Hello, you have sold ${amount} worth of assets`);
+  alert(`You have sold ${amount} worth of assets`);
   init();
 });
 
