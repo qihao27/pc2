@@ -88,42 +88,42 @@ router.post("/users/add", requiresAuth(), (request, response) => {
 
 // ------------------- ACCOUNTS -------------------
 
-// Define an API to return all accounts
-router.get("/accounts/all", requiresAuth(), (request, response) => {
-  let accounts = database.get_all_accounts();
-  response.send(accounts);
-});
+// // Define an API to return all accounts
+// router.get("/accounts/all", requiresAuth(), (request, response) => {
+//   let accounts = database.get_all_accounts();
+//   response.send(accounts);
+// });
 
-// Define an API to return accounts when input account holder
-router.get("/accounts/by-accholder", requiresAuth(), (request, response) => {
-  let accounts = database.get_accs_by_holder(request.query.accholder);
-  response.send(accounts);
-});
+// // Define an API to return accounts when input account holder
+// router.get("/accounts/by-accholder", requiresAuth(), (request, response) => {
+//   let accounts = database.get_accs_by_holder(request.query.accholder);
+//   response.send(accounts);
+// });
 
-router.get("/accounts/by-acc-no", requiresAuth(), (request, response) => {
-  let accounts = database.get_accs_by_holder(request.query.acc_no);
-  response.send(accounts);
-}); // still not working
+// router.get("/accounts/by-acc-no", requiresAuth(), (request, response) => {
+//   let accounts = database.get_accs_by_holder(request.query.acc_no);
+//   response.send(accounts);
+// }); // still not working
 
 // Define a POST API to add a new account to database
-router.post("/accounts/add", requiresAuth(), (request, response) => {
-  let accounts = database.add_acc(request.body.acc_no);
-  response.send("account added.");
-});
+// router.post("/accounts/add", requiresAuth(), (request, response) => {
+//   let accounts = database.add_acc(request.body.acc_no);
+//   response.send("account added.");
+// });
 
 // Define a DEL API
 
-router.delete("/accounts/delete", requiresAuth(), (request, response) => {
-  let account_to_del = database.del_acc_by_accNo(request.query.acc_no);
-  response.send(`Account ${account_to_del} deleted`);
-});
+// router.delete("/accounts/delete", requiresAuth(), (request, response) => {
+//   let account_to_del = database.del_acc_by_accNo(request.query.acc_no);
+//   response.send(`Account ${account_to_del} deleted`);
+// });
 
 // ------------------- TRANSACTIONS -------------------
 
-router.get("/transactions/all", requiresAuth(), (request, response) => {
-  let transactions = database.get_all_transactions();
-  response.send(transactions);
-});
+// router.get("/transactions/all", requiresAuth(), (request, response) => {
+//   let transactions = database.get_all_transactions();
+//   response.send(transactions);
+// });
 
 router.get(
   "/transactions/by-account-id",
@@ -211,5 +211,20 @@ router.get("/transactions/buy", requiresAuth(), (request, response) => {
 //       VALUES
 //         (10, ${request.query.amount} , 2022-03-06 , ${request.query.user - id});
 //       `, // HC
+
+// API for getting balance from transactions table using SUM query
+router.get("/transactions/balance", requiresAuth(), (request, response) => {
+  connection.query(
+    `SELECT sum(amount) AS balance FROM transactions WHERE account_id=922`,
+    (error, result) => {
+      if (error) {
+        console.log(error);
+        response.status(500).send("Something went wrong...");
+      } else {
+        response.status(200).send(result);
+      }
+    }
+  );
+});
 
 module.exports = { router };
