@@ -130,7 +130,7 @@ router.get(
   requiresAuth(),
   (request, response) => {
     connection.query(
-      `select type, amount, date(transaction_date) as transaction_date, account_id from transactions where account_id=${request.query.account_id}`,
+      `select type, amount, date(transaction_date) as transaction_date, account_id from transactions where account_id=${request.query.account_id} `,
       (error, result) => {
         if (error) {
           console.log(error);
@@ -204,13 +204,31 @@ router.get("/transactions/buy", requiresAuth(), (request, response) => {
   );
 });
 
-// POST API for sell
+//  API for sell
+router.get("/transactions/sell", requiresAuth(), (request, response) => {
+  var currentdate = new Date();
 
-//`INSERT INTO
-//         transactions(type, amount, transaction_data, account_id)
-//       VALUES
-//         (10, ${request.query.amount} , 2022-03-06 , ${request.query.user - id});
-//       `, // HC
+  var datetime = "";
+  datetime += currentdate.getFullYear() + "-";
+  datetime += currentdate.getMonth() + 1 + "-";
+  datetime += currentdate.getDate();
+
+  let sellAmt = request.query.amount;
+
+  connection.query(
+    `INSERT INTO transactions(type, amount, transaction_date, account_id) VALUES ('010', ${sellAmt}, '${datetime}', 922)`,
+    (error, result) => {
+      if (error) {
+        console.log(error);
+        response.status(500).send("Something went wrong...");
+      } else {
+        result.length == 0
+          ? response.status(404).send("Please input amount to sell.")
+          : response.status(200).send(result);
+      }
+    }
+  );
+});
 
 // API for getting balance from transactions table using SUM query
 router.get("/transactions/balance", requiresAuth(), (request, response) => {

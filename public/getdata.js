@@ -29,19 +29,19 @@ google.charts.load("current", { packages: ["corechart"] });
 google.charts.setOnLoadCallback(drawChart);
 
 function drawChart() {
-  // //console.log(parseInt(deposiitbalance.innerText.value));
-  // var data = google.visualization.arrayToDataTable([
-  //   ["Item", "$"],
-  //   ["Deposit", parseInt(init_deposit_balance)],
-  //   ["Investment", parseInt(init_investment_balance)],
-  // ]);
-  // var options = {
-  //   title: "",
-  // };
-  // var chart = new google.visualization.PieChart(
-  //   document.getElementById("piechart")
-  // );
-  // chart.draw(data, options);
+  //console.log(parseInt(deposiitbalance.innerText.value));
+  var data = google.visualization.arrayToDataTable([
+    ["Item", "$"],
+    ["Deposit", parseInt(accountBalance)],
+    ["Investment", parseInt(init_investment_balance)], // change later
+  ]);
+  var options = {
+    title: "",
+  };
+  var chart = new google.visualization.PieChart(
+    document.getElementById("piechart")
+  );
+  chart.draw(data, options);
 }
 
 // transaction history
@@ -101,6 +101,25 @@ b2.addEventListener("click", () => {
     $(".mypanel").html(code);
   });
   alert(`Hello, you have made an investment of ${amount}`);
+  init();
+});
+
+//b3 = selling
+const b3 = document.getElementById("b3");
+b3.addEventListener("click", () => {
+  console.log("selling");
+  let user_id = 922;
+  let amount = document.getElementById("investment_amount").value;
+  $.getJSON(`${url}/transactions/sell?amount=${amount}`, () => {
+    // console.log(data);
+
+    let code = "<ul>";
+    code += "Sold.";
+    code += "</ul>";
+
+    $(".mypanel").html(code);
+  });
+  alert(`Hello, you have sold ${amount} worth of assets`);
   init();
 });
 
