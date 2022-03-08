@@ -35,26 +35,53 @@ router.get("/index", (request, response) => {
   response.sendFile(path.join(__dirname + "/index.html"));
 });
 
-// ------------------- TRANSACTIONS -------------------
-router.get(
-  "/transactions/by-account-id",
-  requiresAuth(),
-  (request, response) => {
-    connection.query(
-      `select * from transactions where account_id=${request.query.account_id} `,
-      (error, result) => {
-        if (error) {
-          console.log(error);
-          response.status(500).send("Something went wrong...");
-        } else {
-          result.length == 0
-            ? response.status(404).send("user not found")
-            : response.status(200).send(result);
-        }
+router.get('/profile', requiresAuth(), (request, response) => {
+  // response.send(JSON.stringify(request.oidc.user));
+  let userinfo = JSON.stringify(request.oidc.user);
+  let name = userinfo.split('"name":"')[1].split('","')[0];
+  let fname = name.split(" ")[0];
+  let lname = name.split(" ")[1];
+  let email = userinfo.split('"email":"')[1].split('","')[0];
+  response.send(fname+" "+lname+" "+email);
+});
+
+// GET user based on fname/lname/email
+router.get("/uid", requiresAuth(), (request, response) => {
+  let userinfo = JSON.stringify(request.oidc.user);
+  let name = userinfo.split('"name":"')[1].split('","')[0];
+  let fname = name.split(" ")[0];
+  let lname = name.split(" ")[1];
+  connection.query(
+    `select id from users where fname='${fname}' and lname='${lname}'`,
+    (error, result) => {
+      if (error) {
+        console.log(error);
+        response.status(500).send("Something went wrong...");
+      } else {
+        result.length == 0
+          ? response.status(404).send("user not found")
+          : response.status(200).send(result);
       }
-    );
-  }
-);
+    }
+  );
+});
+
+// ------------------- TRANSACTIONS -------------------
+router.get("/transactions/by-account-id", requiresAuth(), (request, response) => {
+  connection.query(
+    `select * from transactions where account_id=${request.query.account_id} `,
+    (error, result) => {
+      if (error) {
+        console.log(error);
+        response.status(500).send("Something went wrong...");
+      } else {
+        result.length == 0
+          ? response.status(404).send("user not found")
+          : response.status(200).send(result);
+      }
+    }
+  );
+});
 
 // POST API for deposits
 router.get(

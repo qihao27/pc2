@@ -6,7 +6,7 @@ const url = "http://localhost:3000";  // for testing purpose only
 
 let init_deposit_balance = 0.0;
 let init_investment_balance = 5000.0; //hardcoded for now
-let user_id = 922;
+// let user_id = 922;
 
 google.charts.load("current", { packages: ["corechart"] });
 google.charts.setOnLoadCallback(drawChart);
@@ -98,6 +98,9 @@ history_btn.addEventListener("click", () => {
 function init() {
   let temp_amount = 0.0;
   let balance = 0;
+  $.getJSON(`${url}/uid`, (data) => {
+    console.log("uid: "+data[0].id);
+  });
   $.getJSON(`${url}/transactions/balance`, (data) => {
     console.log(data[0].balance);
     balance = data[0].balance;
