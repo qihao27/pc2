@@ -4,22 +4,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-
   <title>NUS Money</title>
 
   <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
   <link rel="stylesheet" href="public/style.css" />
-  
   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-  
 </head>
 
 <body>
   <div class="container">
-    <img src="https://i.imgur.com/0Ow99e0.gif" class="center" alt="description of gif" /> 
-    
+    <img src="https://i.imgur.com/0Ow99e0.gif" class="center" alt="description of gif" />
 
     <div class="inc-exp-container">
       <div>
@@ -34,12 +30,9 @@
       </div>
     </div>
 
-  
-    
     <h3>Portfolio</h3>
- 
-      <div id="piechart"></div>
- 
+    <div id="piechart"></div>
+
     <ul id="list" class="list">
       <!-- <li class="minus">
         Cash <span>-$400</span><button class="delete-btn">x</button>
@@ -47,60 +40,29 @@
     </ul>
 
     <h3>Deposit funds<h3>
-    <form id="form">
+    <form id="form_deposit">
       <div class="form-control">
         <!-- <label for="custname">Deposit money</label> -->
-        <input
-          type="text"
-          id="deposit_amount"
-          placeholder="Insert amount to deposit..."
-        />
+        <input type="text" id="deposit_amount" placeholder="Insert amount to deposit..." />
       </div>
-      <button id="b1" class="btn">Top Up</button></form>
-      <!-- <button id="b2" class="btn">Reset</button> -->
+      <button id="deposit_btn" class="btn">Top Up</button>
+    </form>
+    <!-- <button id="b2" class="btn">Reset</button> -->
+
     <h3>Investment<h3>
-    <form id="form">
+    <form id="form_invest">
       <div class="form-control">
         <!-- <label for="custname">Deposit money</label> -->
-        <input
-          type="text"
-          id="investment_amount"
-          placeholder="Insert amount to invest..."
-        />
+        <input type="text" id="investment_amount" placeholder="Insert amount to invest..." />
       </div>
-      <button id="b2" class="btn">Buy</button>
-      
-      <button id="b3" class="btn">Sell</button></form>
-      
-      
-      
-      <!-- <div class="form-control">
-        
-      </div> -->
+      <button id="buy_btn" class="btn">Buy</button>
+      <button id="sell_btn" class="btn">Sell</button>
     </form>
 
     <h3>Transaction History</h3>
-
-      <button id="b4" class="btn">Transaction History</button>
-      <div class="mypanel"></div>
-    
+    <button id="history_btn" class="btn">Transaction History</button>
+    <div class="mypanel"></div>
   </div>
-  
-    
-
 
   <script src="public/getdata.js"></script>
 </body>
-
-<!-- <body>
-  <form id="form">
-    <input id="inputbox"></input>
-    <button type="button" id="b1" class="btn btn-primary">Filter by UID</button>
-    <button type="button" id="b2" class="btn btn-primary">View All</button>
-  </form>
-
-  <div class="mypanel"> </div>
-
-  <script src="public/getdata.js"></script>
-
-</body> -->
