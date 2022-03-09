@@ -2,7 +2,7 @@
 // const investmentbalance = document.getElementById("investment");
 const accountBalance = document.getElementById("account_balance");
 // const url = "https://fintech-group4.herokuapp.com";  // live site
-const url = "http://localhost:3000";  // for testing purpose only
+const url = "http://localhost:3000"; // for testing purpose only
 
 let init_deposit_balance = 0.0;
 let init_investment_balance = 5000.0; //hardcoded for now
@@ -32,10 +32,9 @@ const deposit_btn = document.getElementById("deposit_btn");
 deposit_btn.addEventListener("click", () => {
   // let user_id = 922;
   let amount = document.getElementById("deposit_amount").value;
-  $.getJSON(`${url}/transactions/deposit?amount=${amount}`, () => {
-    alert(`You have successfully deposited $${amount}.`);
-  });
-
+  $.getJSON(`${url}/transactions/deposit?amount=${amount}`);
+  alert(`You have successfully deposited $${amount}.`);
+  console.log("deposit successful");
   init();
 });
 
@@ -45,14 +44,14 @@ buy_btn.addEventListener("click", () => {
   console.log("buying");
   // let user_id = 922;
   let amount = document.getElementById("investment_amount").value;
-  $.getJSON(`${url}/transactions/balance`, (data) => { 
-    let balance = data[0].balance;
+  let balance = 0;
+  $.getJSON(`${url}/transactions/balance`, (data) => {
+    balance = data[0].balance;
     if (balance >= amount) {
-      $.getJSON(`${url}/transactions/buy?amount=${amount}`, () => {
-        alert(`You have made an investment of $${amount}`);
-      });
+      $.getJSON(`${url}/transactions/buy?amount=${amount}`);
+      alert(`You have made an investment of $${amount}`);
     } else {
-      alert(`Insufficient found!`);
+      alert(`Insufficient funds!`);
     }
   });
 
@@ -65,19 +64,19 @@ sell_btn.addEventListener("click", () => {
   console.log("selling");
   // let user_id = 922;
   let amount = document.getElementById("investment_amount").value;
-  $.getJSON(`${url}/transactions/sell?amount=${amount}`, () => {
-    alert(`You have sold $${amount} worth of assets`);
-  });
+  $.getJSON(`${url}/transactions/sell?amount=${amount}`);
+  alert(`You have sold $${amount} worth of assets`);
 
   init();
 });
 
-
 // transaction history
 const history_btn = document.getElementById("history_btn");
 history_btn.addEventListener("click", () => {
+  let user_id = 922;
   $.getJSON(
-    `${url}/transactions/by-account-id?account_id=${user_id}`, (data) => {
+    `${url}/transactions/by-account-id?account_id=${user_id}`,
+    (data) => {
       console.log(data);
       let code = "<ul>";
       // TODO: 6 March - change format for transactions history
@@ -91,16 +90,18 @@ history_btn.addEventListener("click", () => {
       $(".mypanel").html(code);
     }
   );
-
+  // $(".form_invest").submit(function (e) {
+  //   e.preventDefault();
+  // });
   init();
 });
 
 function init() {
   let temp_amount = 0.0;
   let balance = 0;
-  $.getJSON(`${url}/uid`, (data) => {
-    console.log("uid: "+data[0].id);
-  });
+  // $.getJSON(`${url}/uid`, (data) => {
+  //   console.log("uid: " + data[0].id);
+  // });
   $.getJSON(`${url}/transactions/balance`, (data) => {
     console.log(data[0].balance);
     balance = data[0].balance;
@@ -130,9 +131,9 @@ function init() {
   //   }
   // );
 
-  $("#btn").submit(function (e) {
-    e.preventDefault();
-  });
+  // $("#btn").submit(function (e) {
+  //   e.preventDefault();
+  // });
 
   drawChart();
 
