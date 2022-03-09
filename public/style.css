@@ -108,7 +108,24 @@ input[type="number"] {
   font-size: 16px;
   margin: 10px 0 30px;
   padding: 10px;
-  width: 100%;
+  width: 60%;
+}
+
+.btn-center {
+  display: flex;  
+  justify-content: center; 
+}
+
+.btn-buy {
+  display: inline;
+  float: left;
+  width: 40%;
+}
+
+.btn-sell {
+  display: inline;
+  float: right;
+  width: 40%;
 }
 
 .mypanel {

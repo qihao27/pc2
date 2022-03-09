@@ -24,11 +24,7 @@ router.use("/public", express.static(path.join(__dirname, "public")));
 
 // ------------------- Default -------------------
 router.get("/", (request, response) => {
-  if (request.oidc.isAuthenticated()) {
-    response.redirect("/index");
-  } else {
-    response.redirect("/login");
-  }
+  request.oidc.isAuthenticated() ? response.redirect("/index") : response.redirect("/login");
 });
 
 router.get("/index", (request, response) => {
@@ -36,7 +32,6 @@ router.get("/index", (request, response) => {
 });
 
 router.get('/profile', requiresAuth(), (request, response) => {
-  // response.send(JSON.stringify(request.oidc.user));
   let userinfo = JSON.stringify(request.oidc.user);
   let name = userinfo.split('"name":"')[1].split('","')[0];
   let fname = name.split(" ")[0];
@@ -45,8 +40,25 @@ router.get('/profile', requiresAuth(), (request, response) => {
   response.send(fname+" "+lname+" "+email);
 });
 
+// GET balance and uid
+/*router.get("/balance", requiresAuth(), (request, response) => {
+  let userinfo = JSON.stringify(request.oidc.user);
+  let email = userinfo.split('"email":"')[1].split('","')[0];
+  connection.query(`select u.id, a.balance from accounts a left join users u 
+    on a.userid = u.id where u.email='${email}'`, (error, result) => {
+      if (error) {
+        console.log(error);
+        response.status(500).send("Something went wrong...");
+      } else {
+        result.length == 0
+          ? response.status(404).send("user not found")
+          : response.status(200).send(result);
+      }
+    })
+});*/
+
 // GET user based on fname/lname/email
-router.get("/uid", requiresAuth(), (request, response) => {
+router.get("/users/uid", requiresAuth(), (request, response) => {
   let userinfo = JSON.stringify(request.oidc.user);
   let name = userinfo.split('"name":"')[1].split('","')[0];
   let fname = name.split(" ")[0];
@@ -67,54 +79,50 @@ router.get("/uid", requiresAuth(), (request, response) => {
 });
 
 // ------------------- TRANSACTIONS -------------------
-router.get("/transactions/by-account-id", requiresAuth(), (request, response) => {
-  connection.query(
-    `select * from transactions where account_id=${request.query.account_id} `,
-    (error, result) => {
-      if (error) {
-        console.log(error);
-        response.status(500).send("Something went wrong...");
-      } else {
-        result.length == 0
-          ? response.status(404).send("user not found")
-          : response.status(200).send(result);
-      }
+// GET transaction history
+router.get("/transactions/history", requiresAuth(), (request, response) => {
+  let userinfo = JSON.stringify(request.oidc.user);
+  let email = userinfo.split('"email":"')[1].split('","')[0];
+  connection.query(`select u.id, a.balance, t.transaction_date, t.amount from accounts a
+      left join users u on a.userid = u.id left join transactions t on t.account_id = a.account_id
+      where u.email='${email}'`, (error, result) => {
+    if (error) {
+      console.log(error);
+      response.status(500).send("Something went wrong...");
+    } else {
+      result.length == 0
+        ? response.status(404).send("user not found")
+        : response.status(200).send(result);
     }
-  );
+  });
 });
 
 // POST API for deposits
-router.get(
-  "/transactions/deposit",
-  requiresAuth(),
-  (request, response) => {
-    var currentdate = new Date();
+router.get("/transactions/deposit", requiresAuth(), (request, response) => {
+  let userinfo = JSON.stringify(request.oidc.user);
+  let email = userinfo.split('"email":"')[1].split('","')[0];
+  let currentdate = new Date();
+  let datetime = "";
+  datetime += currentdate.getFullYear() + "-";
+  datetime += currentdate.getMonth() + 1 + "-";
+  datetime += currentdate.getDate();
 
-    var datetime = "";
-    datetime += currentdate.getFullYear() + "-";
-    datetime += currentdate.getMonth() + 1 + "-";
-    datetime += currentdate.getDate();
-
-    connection.query(
-      `
-    INSERT INTO 
-        transactions(type, amount, transaction_date, account_id)
-    VALUES
-         ('080', ${request.query.amount} , '${datetime}' , 922)
-         `,
+  connection.query(`INSERT INTO transactions (type, amount, transaction_date, account_id)
+      VALUES ('080', ${request.query.amount}, '${datetime}', 
+      (select a.account_id from users u left join accounts a on a.userid=u.id where u.email='${email}'));
+      update accounts a left join users u on a.userid=u.id set a.balance = a.balance + ${request.query.amount}
+      where u.email='${email}'`,
       (error, result) => {
-        if (error) {
-          console.log(error);
-          response.status(500).send("Something went wrong...");
-        } else {
-          result.length == 0
-            ? response.status(404).send("Please input deposit amount.")
-            : response.status(200).send(result);
-        }
-      }
-    );
-  }
-);
+    if (error) {
+      console.log(error);
+      response.status(500).send("Something went wrong...");
+    } else {
+      result.length == 0
+        ? response.status(404).send("Please input deposit amount.")
+        : response.status(200).send(result);
+    }
+  });
+});
 
 // POST API for buy
 router.get("/transactions/buy", requiresAuth(), (request, response) => {
@@ -184,18 +192,6 @@ router.get("/transactions/balance", requiresAuth(), (request, response) => {
 });
 
 // ------------------- USERS -------------------
-// GET all users
-/*router.get("/users/all", requiresAuth(), (request, response) => {
-  connection.query("select * from users", (error, result) => {
-    if (error) {
-      console.log(error);
-      response.status(500).send("Something went wrong...");
-    } else {
-      response.status(200).send(result);
-    }
-  });
-});
-
 // GET user based on uid passed in the request
 router.get("/users/by-uid", requiresAuth(), (request, response) => {
   connection.query(
@@ -214,7 +210,7 @@ router.get("/users/by-uid", requiresAuth(), (request, response) => {
 });
 
 // Define a POST API to add a new user to database
-router.post("/users/add", requiresAuth(), (request, response) => {
+/*router.post("/users/add", requiresAuth(), (request, response) => {
   connection.query(
     `insert into users (first_name, last_name, email) 
     values ("${request.body.first_name}", "${request.body.last_name}", "${request.body.email}")`,
