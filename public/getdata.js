@@ -1,8 +1,8 @@
 // const deposiitbalance = document.getElementById("deposit");
 // const investmentbalance = document.getElementById("investment");
 const accountBalance = document.getElementById("account_balance");
-// const url = "https://fintech-group4.herokuapp.com";  // live site
-const url = "http://localhost:3000"; // for testing purpose only
+const url = "https://fintech-group4.herokuapp.com";  // live site
+// const url = "http://localhost:3000"; // for testing purpose only
 
 let init_deposit_balance = 0.0;
 let init_investment_balance = 5000.0; //hardcoded for now
