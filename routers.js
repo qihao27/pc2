@@ -2,10 +2,11 @@ const express = require("express");
 const path = require("path");
 let router = express.Router();
 
-require('dotenv').config();
+require("dotenv").config();
 const { connection } = require("./database");
+const { auth, requiresAuth } = require("express-openid-connect");
 
-const { auth, requiresAuth } = require('express-openid-connect');
+router.use("/public", express.static(path.join(__dirname, "public")));
 router.use(
   auth({
     authRequired: false,
@@ -18,106 +19,141 @@ router.use(
   })
 );
 
-router.use('/public', express.static(path.join(__dirname, 'public')));
-
-// ------------------- Auth0 -------------------
-router.get('/', (request, response) => {
-  if (request.oidc.isAuthenticated()) {
-    response.redirect("/index");
-  } else {
-    response.send('Logged out');
-  }
+router.get("/", (request, response) => {
+  request.oidc.isAuthenticated() ? response.redirect("/index") : response.redirect("/login");
 });
 
-// GET API with path "/home"
-router.get("/home", requiresAuth(), (request, response) => {
-  response.send("Welcome!");
+router.get("/index", (request, response) => {
+  response.sendFile(path.join(__dirname + "/index.html"));
 });
 
-router.get("/index", requiresAuth(), (request, response) => {
-  response.sendFile(path.join(__dirname + '/index.html'));
+router.get('/profile', requiresAuth(), (request, response) => {
+  let userinfo = JSON.stringify(request.oidc.user);
+  let name = userinfo.split('"name":"')[1].split('","')[0];
+  let fname = name.split(" ")[0];
+  let lname = name.split(" ")[1];
+  let email = userinfo.split('"email":"')[1].split('","')[0];
+  response.send(fname+" "+lname+" "+email);
 });
 
-// ------------------- USERS -------------------
-// GET all users
-router.get("/users/all", requiresAuth(), (request, response) => {
-  connection.query("select * from user", (error, result) => {
+router.get("/balance", requiresAuth(), (request, response) => {
+  let userinfo = JSON.stringify(request.oidc.user);
+  let email = userinfo.split('"email":"')[1].split('","')[0];
+  connection.query(`select u.id, a.balance from accounts a left join users u on a.userid = u.id
+      where u.email='${email}'`, (error, result) => {
     if (error) {
       console.log(error);
       response.status(500).send("Something went wrong...");
     } else {
-      response.status(200).send(result);
+      result.length == 0
+        ? response.status(404).send("user not found")
+        : response.status(200).send(result);
     }
   });
 });
 
-// GET user based on uid passed in the request
-router.get("/users/by-uid", requiresAuth(), (request, response) => {
-  connection.query(`select * from user where uid=${request.query.uid}`, (error, result) => {
+router.get("/investment", requiresAuth(), (request, response) => {
+  let userinfo = JSON.stringify(request.oidc.user);
+  let email = userinfo.split('"email":"')[1].split('","')[0];
+  connection.query(`select u.id, a.balance, sum(t.amount) as invest from accounts a left join users u
+      on a.userid = u.id left join transactions t on t.account_id = a.account_id
+      where u.email='${email}' and t.type=020 group by t.type`, (error, result) => {
     if (error) {
       console.log(error);
       response.status(500).send("Something went wrong...");
     } else {
-      (result.length == 0) ? response.status(404).send("user not found") : response.status(200).send(result);
+      result.length == 0
+        ? response.status(404).send("user not found")
+        : response.status(200).send(result);
     }
   });
 });
 
-// Define a POST API to add a new user to database
-router.post("/users/add", requiresAuth(), (request, response) => {
-  connection.query(`insert into user (first_name, last_name, email) 
-    values ("${request.body.first_name}", "${request.body.last_name}", "${request.body.email}")`, (error, result) => {
+// GET transaction history
+router.get("/transactions/history", requiresAuth(), (request, response) => {
+  let userinfo = JSON.stringify(request.oidc.user);
+  let email = userinfo.split('"email":"')[1].split('","')[0];
+  connection.query(`select u.id, a.balance, t.transaction_date, t.amount, t.type from accounts a
+      left join users u on a.userid = u.id left join transactions t on t.account_id = a.account_id
+      where u.email='${email}';
+      select sum(t.amount) as invest from accounts a left join users u on a.userid = u.id 
+      left join transactions t on t.account_id = a.account_id where u.email='${email}'
+      and t.type in (010, 020) group by t.type order by t.type`, (error, result) => {
     if (error) {
       console.log(error);
       response.status(500).send("Something went wrong...");
     } else {
-      response.status(200).send("User added to the database!");
+      result.length == 0
+        ? response.status(404).send("user not found")
+        : response.status(200).send(result);
     }
   });
 });
 
-// ------------------- ACCOUNTS -------------------
+// top up to account balance
+router.get("/transactions/deposit", requiresAuth(), (request, response) => {
+  let userinfo = JSON.stringify(request.oidc.user);
+  let email = userinfo.split('"email":"')[1].split('","')[0];
+  let currentdate = new Date();
+  let datetime = "";
+  datetime += currentdate.getFullYear() + "-";
+  datetime += currentdate.getMonth() + 1 + "-";
+  datetime += currentdate.getDate();
 
-// Define an API to return all accounts
-router.get("/accounts/all", requiresAuth(), (request, response) => {
-  let accounts = database.get_all_accounts();
-  response.send(accounts);
+  let amount = request.query.amount;
+  connection.query(`INSERT INTO transactions (type, amount, transaction_date, account_id)
+      VALUES ('080', ${amount}, '${datetime}', 
+      (select a.account_id from users u left join accounts a on a.userid=u.id where u.email='${email}'));
+      update accounts a left join users u on a.userid=u.id set a.balance = a.balance + ${amount}
+      where u.email='${email}'`, (error, result) => {
+    if (amount == null) { response.status(404).send("Missing input"); }
+    else if (error) { response.status(500).send(error); }
+    else { response.status(200).send("Top up completed"); }
+  });
 });
 
-// Define an API to return accounts when input account holder
-router.get("/accounts/by-accholder", requiresAuth(), (request, response) => {
-  let accounts = database.get_accs_by_holder(request.query.accholder);
-  response.send(accounts);
+// buy investments
+router.get("/transactions/buy", requiresAuth(), (request, response) => {
+  let userinfo = JSON.stringify(request.oidc.user);
+  let email = userinfo.split('"email":"')[1].split('","')[0];
+  var currentdate = new Date();
+  var datetime = "";
+  datetime += currentdate.getFullYear() + "-";
+  datetime += currentdate.getMonth() + 1 + "-";
+  datetime += currentdate.getDate();
+
+  let amount = request.query.amount;
+  connection.query(`INSERT INTO transactions (type, amount, transaction_date, account_id)
+      VALUES ('010', ${amount}, '${datetime}',
+      (select a.account_id from users u left join accounts a on a.userid=u.id where u.email='${email}'));
+      update accounts a left join users u on a.userid=u.id set a.balance = a.balance - ${amount}
+      where u.email='${email}'`, (error, result) => {
+    if (amount == null) { response.status(404).send("Missing input"); }
+    else if (error) { response.status(500).send(error); }
+    else { response.status(200).send("Purchase completed"); }
+  });
 });
 
-router.get("/accounts/by-acc-no", requiresAuth(), (request, response) => {
-  let accounts = database.get_accs_by_holder(request.query.acc_no);
-  response.send(accounts);
-}); // still not working
+// sell investments
+router.get("/transactions/sell", requiresAuth(), (request, response) => {
+  let userinfo = JSON.stringify(request.oidc.user);
+  let email = userinfo.split('"email":"')[1].split('","')[0];
+  var currentdate = new Date();
+  var datetime = "";
+  datetime += currentdate.getFullYear() + "-";
+  datetime += currentdate.getMonth() + 1 + "-";
+  datetime += currentdate.getDate();
 
-// Define a POST API to add a new account to database
-router.post("/accounts/add", requiresAuth(), (request, response) => {
-  let accounts = database.add_acc(request.body.acc_no);
-  response.send("account added.");
-});
-
-// Define a DEL API
-
-router.delete("/accounts/delete", requiresAuth(), (request, response) => {
-  let account_to_del = database.del_acc_by_accNo(request.query.acc_no);
-  response.send(`Account ${account_to_del} deleted`);
-});
-
-// ------------------- TRANSACTIONS -------------------
-
-router.get("/transactions/all", requiresAuth(), (request, response) => {
-  let transactions = database.get_all_transactions();
-  response.send(transactions);
-});
-
-router.get("transactions/by-acc-no", requiresAuth(), (request, response) => {
-  let transactions = database.get_transactions_by_acc_no(request.query.acc_no);
-  response.send(transactions);
+  let amount = request.query.amount;
+  connection.query(`INSERT INTO transactions (type, amount, transaction_date, account_id)
+      VALUES ('020', ${amount}, '${datetime}',
+      (select a.account_id from users u left join accounts a on a.userid=u.id where u.email='${email}'));
+      update accounts a left join users u on a.userid=u.id set a.balance = a.balance + ${amount}
+      where u.email='${email}'`, (error, result) => {
+    if (amount == null) { response.status(404).send("Missing input"); }
+    else if (error) { response.status(500).send(error); }
+    else { response.status(200).send("Purchase completed"); }
+  });
 });
 
 module.exports = { router };

@@ -6,7 +6,8 @@ let connection = mysql.createConnection({
     port: process.env.DBPORT,
     user: process.env.DBUSER,
     password: process.env.DBPASSWD,
-    database: process.env.DBNAME
+    database: process.env.DBNAME,
+    multipleStatements: true
 });
 
 connection.connect((error) => {
