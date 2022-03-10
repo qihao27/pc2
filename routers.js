@@ -36,39 +36,6 @@ router.get('/profile', requiresAuth(), (request, response) => {
   response.send(fname+" "+lname+" "+email);
 });
 
-router.get("/balance", requiresAuth(), (request, response) => {
-  let userinfo = JSON.stringify(request.oidc.user);
-  let email = userinfo.split('"email":"')[1].split('","')[0];
-  connection.query(`select u.id, a.balance from accounts a left join users u on a.userid = u.id
-      where u.email='${email}'`, (error, result) => {
-    if (error) {
-      console.log(error);
-      response.status(500).send("Something went wrong...");
-    } else {
-      result.length == 0
-        ? response.status(404).send("user not found")
-        : response.status(200).send(result);
-    }
-  });
-});
-
-router.get("/investment", requiresAuth(), (request, response) => {
-  let userinfo = JSON.stringify(request.oidc.user);
-  let email = userinfo.split('"email":"')[1].split('","')[0];
-  connection.query(`select u.id, a.balance, sum(t.amount) as invest from accounts a left join users u
-      on a.userid = u.id left join transactions t on t.account_id = a.account_id
-      where u.email='${email}' and t.type=020 group by t.type`, (error, result) => {
-    if (error) {
-      console.log(error);
-      response.status(500).send("Something went wrong...");
-    } else {
-      result.length == 0
-        ? response.status(404).send("user not found")
-        : response.status(200).send(result);
-    }
-  });
-});
-
 // GET transaction history
 router.get("/transactions/history", requiresAuth(), (request, response) => {
   let userinfo = JSON.stringify(request.oidc.user);
