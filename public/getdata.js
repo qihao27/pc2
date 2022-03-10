@@ -10,7 +10,7 @@ let current_balance = 0.00;
 let current_invest = 0.00;
 let aid = 0;
 
-google.charts.load("current", { packages: ["corechart"]});
+// google.charts.load("current", { packages: ["corechart"]});
 
 function init() {
   $.getJSON(`${url}/transactions/history`, (data,callback) => {
@@ -84,16 +84,16 @@ sell_btn.addEventListener("click", () => {
   init();
 });
 
-function drawChart() {
-  var data = google.visualization.arrayToDataTable([
-    ["Item", "$"],
-    ["Deposit", parseInt(current_balance)],
-    ["Investment", parseInt(current_invest)],
-  ]);
-  var options = {};
-  var chart = new google.visualization.PieChart(document.getElementById('piechart'));
-  chart.draw(data, options);
-}
+// function drawChart() {
+//   var data = google.visualization.arrayToDataTable([
+//     ["Item", "$"],
+//     ["Deposit", parseInt(current_balance)],
+//     ["Investment", parseInt(current_invest)],
+//   ]);
+//   var options = {};
+//   var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+//   chart.draw(data, options);
+// }
 
 init();
-google.charts.setOnLoadCallback(drawChart);
+// google.charts.setOnLoadCallback(drawChart);
