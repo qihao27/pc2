@@ -1,5 +1,5 @@
-const url = "https://fintech-group4.herokuapp.com";  // live site
-// const url = "http://localhost:3000"; // for testing purpose only
+// const url = "https://fintech-group4.herokuapp.com";  // live site
+const url = "http://localhost:3000"; // for testing purpose only
 const account_balance = document.getElementById("account_balance");
 const investment = document.getElementById("investment");
 const deposit_btn = document.getElementById("deposit_btn");
@@ -10,11 +10,10 @@ let current_balance = 0.00;
 let current_invest = 0.00;
 let aid = 0;
 
-google.charts.load("current", { packages: ["corechart"] });
-google.charts.setOnLoadCallback(drawChart);
+google.charts.load("current", { packages: ["corechart"]});
 
 function init() {
-  $.getJSON(`${url}/transactions/history`, (data) => {
+  $.getJSON(`${url}/transactions/history`, (data,callback) => {
     console.log(data);
     let code = "<ul>";
     aid = data[0][0].account_id;
@@ -43,6 +42,7 @@ function init() {
     code += "</ul>";
     $(".mypanel").html(code);
   });
+  
 }
 
 // top up button control
@@ -85,14 +85,15 @@ sell_btn.addEventListener("click", () => {
 });
 
 function drawChart() {
-  const chart = new google.visualization.PieChart(document.getElementById('piechart'));
-  let data = google.visualization.arrayToDataTable([
+  var data = google.visualization.arrayToDataTable([
     ["Item", "$"],
     ["Deposit", parseInt(current_balance)],
     ["Investment", parseInt(current_invest)],
   ]);
-  const options = {};
+  var options = {};
+  var chart = new google.visualization.PieChart(document.getElementById('piechart'));
   chart.draw(data, options);
 }
 
 init();
+google.charts.setOnLoadCallback(drawChart);
