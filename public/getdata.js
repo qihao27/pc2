@@ -6,8 +6,8 @@ const sell_btn = document.getElementById("sell_btn");
 const url = "https://fintech-group4.herokuapp.com";  // live site
 // const url = "http://localhost:3000"; // for testing purpose only
 
-google.charts.load("current", { packages: ["corechart"] });
-google.charts.setOnLoadCallback(drawChart);
+// google.charts.load("current", { packages: ["corechart"] });
+// google.charts.setOnLoadCallback(drawChart);
 
 function init() {
   $.getJSON(`${url}/transactions/history`, (data) => {
