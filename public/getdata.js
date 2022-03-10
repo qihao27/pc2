@@ -1,5 +1,5 @@
-// const url = "https://fintech-group4.herokuapp.com";  // live site
-const url = "http://localhost:3000"; // for testing purpose only
+const url = "https://fintech-group4.herokuapp.com";  // live site
+// const url = "http://localhost:3000"; // for testing purpose only
 const account_balance = document.getElementById("account_balance");
 const investment = document.getElementById("investment");
 const deposit_btn = document.getElementById("deposit_btn");
