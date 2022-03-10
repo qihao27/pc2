@@ -41,7 +41,7 @@ function init() {
     $(".mypanel").html(code);
   });
 
-  drawChart();
+  // drawChart();
 }
 
 // top up button control
@@ -86,20 +86,20 @@ sell_btn.addEventListener("click", () => {
   init();
 });
 
-function drawChart() {
-  //console.log(parseInt(deposiitbalance.innerText.value));
-  var data = google.visualization.arrayToDataTable([
-    ["Item", "$"],
-    ["Deposit", parseInt(account_balance)],
-    ["Investment", parseInt(investment)],
-  ]);
-  var options = {
-    title: "",
-  };
-  var chart = new google.visualization.PieChart(
-    document.getElementById("piechart")
-  );
-  chart.draw(data, options);
-}
+// function drawChart() {
+//   //console.log(parseInt(deposiitbalance.innerText.value));
+//   var data = google.visualization.arrayToDataTable([
+//     ["Item", "$"],
+//     ["Deposit", parseInt(account_balance)],
+//     ["Investment", parseInt(investment)],
+//   ]);
+//   var options = {
+//     title: "",
+//   };
+//   var chart = new google.visualization.PieChart(
+//     document.getElementById("piechart")
+//   );
+//   chart.draw(data, options);
+// }
 
 init();
