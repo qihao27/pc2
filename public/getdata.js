@@ -3,8 +3,8 @@ const investment = document.getElementById("investment");
 const deposit_btn = document.getElementById("deposit_btn");
 const buy_btn = document.getElementById("buy_btn");
 const sell_btn = document.getElementById("sell_btn");
-// const url = "https://fintech-group4.herokuapp.com";  // live site
-const url = "http://localhost:3000"; // for testing purpose only
+const url = "https://fintech-group4.herokuapp.com";  // live site
+// const url = "http://localhost:3000"; // for testing purpose only
 
 // google.charts.load("current", { packages: ["corechart"] });
 // google.charts.setOnLoadCallback(drawChart);
