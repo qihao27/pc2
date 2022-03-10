@@ -3,19 +3,21 @@ const investment = document.getElementById("investment");
 const deposit_btn = document.getElementById("deposit_btn");
 const buy_btn = document.getElementById("buy_btn");
 const sell_btn = document.getElementById("sell_btn");
-const url = "https://fintech-group4.herokuapp.com";  // live site
-// const url = "http://localhost:3000"; // for testing purpose only
+// const url = "https://fintech-group4.herokuapp.com";  // live site
+const url = "http://localhost:3000"; // for testing purpose only
 
 // google.charts.load("current", { packages: ["corechart"] });
 // google.charts.setOnLoadCallback(drawChart);
 
 let current_balance = 0.00;
 let current_invest = 0.00;
+let aid = 0;
 
 function init() {
   $.getJSON(`${url}/transactions/history`, (data) => {
     console.log(data);
     let code = "<ul>";
+    aid = data[0][0].account_id;
     current_balance = data[0][0].balance;
     account_balance.innerText = "$" + current_balance.toFixed(2);
 
@@ -51,7 +53,7 @@ deposit_btn.addEventListener("click", () => {
   if (!amount) {
     alert(`Please input amount to be deposited into account.`);
   } else {
-    $.getJSON(`${url}/transactions/deposit?amount=${amount}`);
+    $.getJSON(`${url}/transactions/deposit?amount=${amount}&aid=${aid}`);
     alert(`You have successfully deposited $${amount}.`);
   }
 
@@ -64,7 +66,7 @@ buy_btn.addEventListener("click", () => {
   if (!amount) { alert(`Please input amount to make an investment.`); }
   else if (current_balance < amount) { alert(`Insufficient funds!`); }
   else {
-    $.getJSON(`${url}/transactions/buy?amount=${amount}`);
+    $.getJSON(`${url}/transactions/buy?amount=${amount}&aid=${aid}`);
     alert(`You have made an investment of $${amount}`);
   }
 
@@ -77,7 +79,7 @@ sell_btn.addEventListener("click", () => {
   if (!amount) { alert(`Please input amount to sell assets.`); }
   else if (current_invest < amount) { alert(`Insufficient assets!`); }
   else {
-    $.getJSON(`${url}/transactions/sell?amount=${amount}`);
+    $.getJSON(`${url}/transactions/sell?amount=${amount}&aid=${aid}`);
       alert(`You have sold $${amount} worth of assets`);
   }
 
