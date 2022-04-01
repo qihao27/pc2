@@ -1,21 +1,21 @@
 {
-  "name": "backend",
+  "name": "pc2",
   "version": "1.0.0",
-  "description": "Backend module for PC2.",
-  "main": "index.js",
+  "description": "",
+  "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/qihao27/nodejs.git"
+    "url": "git+https://github.com/qihao27/pc2.git"
   },
   "author": "Qihao",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/qihao27/nodejs/issues"
+    "url": "https://github.com/qihao27/pc2/issues"
   },
-  "homepage": "https://github.com/qihao27/nodejs#readme",
+  "homepage": "https://github.com/qihao27/pc2#readme",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",

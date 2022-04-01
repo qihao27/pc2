@@ -30,14 +30,26 @@ router.get("/", (request, response) => {
 });
 
 router.get("/index", (request, response) => {
+  let userinfo = JSON.stringify(request.oidc.user);
+  let email = userinfo.split('"email":"')[1].split('","')[0];
+  connection.query(`insert into accounts (userid) 
+      select * from (select id from users where email="${email}") as temp
+      where not exists (select userid from accounts
+      where userid = (select id from users where email="${email}"))`);
   response.sendFile(path.join(__dirname + "/index.html"));
 });
 
 router.get('/profile', requiresAuth(), (request, response) => {
   let userinfo = JSON.stringify(request.oidc.user);
-  let name = userinfo.split('"name":"')[1].split('","')[0];
-  let fname = name.split(" ")[0];
-  let lname = name.split(" ")[1];
+  let name = userinfo.split('"name":"')[1].split('","')[0].split(/(?<=^\S+)\s/);
+  let fname, lname;
+  if (name.length < 2) {
+    fname = name[0];
+    lname = "";
+  } else {
+    fname = name[1];
+    lname = name[0];
+  }
   let email = userinfo.split('"email":"')[1].split('","')[0];
   response.send("first_name: "+fname+"<br>"+"last_name: "+lname+"<br>"+"email: "+email);
 });
