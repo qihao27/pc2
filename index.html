@@ -16,7 +16,7 @@
 
 <body>
   <header class="d-flex justify-content-center">
-    <div class="col-md-6">
+    <div class="header">
       <img src="https://i.imgur.com/0Ow99e0.gif" class="d-block w-100" alt="logo" />
       <div class="d-flex pt-2 justify-content-between">
         <button id="profile_btn" class="align-self-start btn">Profile</button>
@@ -24,50 +24,53 @@
       </div>
     </div>
   </header>
-  
+
   <div class="row">
-    <div class="col-md-3"></div>
-    <div class="col-md-6">
-  
-      <div class="inc-exp-container">
-        <div>
-          <h5>BALANCE</h5>
-          <p id="account_balance" class="money plus">$0.00</p>
+    <div class="col-md-4"></div>
+    <div class="col-md-4 d-flex justify-content-center">
+      <div class="middle">
+        <div class="inc-exp-container">
+          <div>
+            <h5>BALANCE</h5>
+            <p id="account_balance" class="money plus">$0.00</p>
+          </div>
+          <div>
+            <h5>INVESTMENT</h5>
+            <p id="investment" class="money plus">$0.00</p>
+          </div>
         </div>
-        <div>
-          <h5>INVESTMENT</h5>
-          <p id="investment" class="money plus">$0.00</p>
-        </div>
+
+        <!-- <h4>Portfolio</h4> -->
+        <div id="piechart"></div>
+
+        <h4>Deposit funds<h4>
+        <form id="form_deposit">
+          <div class="form-control">
+            <input type="text" id="deposit_amount" placeholder="Input amount to deposit..." />
+          </div>
+          <div class="d-flex m-3 justify-content-center">
+            <button id="deposit_btn" class="btn">Top Up</button>
+          </div>
+        </form>
+
+        <h4>Investment<h4>
+        <form id="form_invest">
+          <div class="form-control">
+            <input type="text" id="investment_amount" placeholder="Input amount to invest..." />
+          </div>
+          <div class="d-flex m-3 justify-content-around">
+            <button id="buy_btn" class="btn">Buy</button>
+            <button id="sell_btn" class="btn">Sell</button>
+          </div>
+        </form>
       </div>
-  
-      <!-- <h4>Portfolio</h4> -->
-      <div id="piechart"></div>
-  
-      <h4>Deposit funds<h4>
-      <form id="form_deposit">
-        <div class="form-control">
-          <input type="text" id="deposit_amount" placeholder="Input amount to deposit..." />
-        </div>
-        <div class="d-flex m-3 justify-content-center">
-          <button id="deposit_btn" class="btn">Top Up</button>
-        </div>
-      </form>
-  
-      <h4>Investment<h4>
-      <form id="form_invest">
-        <div class="form-control">
-          <input type="text" id="investment_amount" placeholder="Input amount to invest..." />
-        </div>
-        <div class="d-flex m-3 justify-content-around">
-          <button id="buy_btn" class="btn">Buy</button>
-          <button id="sell_btn" class="btn">Sell</button>
-        </div>
-      </form>
     </div>
-  
-    <div class="col-md-3 mt-3">
-      <h4>Transaction History</h4>
-      <ul id="list" class="list"></ul>
+
+    <div class="col-md-4 mt-3 d-flex justify-content-center">
+      <div class="right">
+        <h4>Transaction History</h4>
+        <ul id="list" class="list"></ul>
+      </div>
     </div>
   </div>
 

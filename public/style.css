@@ -10,10 +10,17 @@
 
 body {
   background-color: #f7f7f7;
-  align-items: center;
   min-height: 100vh;
   margin: 0px 50px 0px;
   font-family: "Lato", sans-serif;
+}
+
+.header, .middle {
+  width: 500px;
+}
+
+.left, .right {
+  width: 280px;
 }
 
 .btn {
