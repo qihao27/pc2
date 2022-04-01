@@ -8,6 +8,19 @@ const deposit_btn = document.getElementById("deposit_btn");
 const buy_btn = document.getElementById("buy_btn");
 const sell_btn = document.getElementById("sell_btn");
 const list = document.getElementById("list");
+const btn_eth = document.getElementById("eth_btn");
+const btn_ecr = document.getElementById("token_btn");
+const qh_address = "0x96f9842De6E591C17d6e544Ff3419Bee5A4f26a3";
+const abi = [{
+  constant: true,
+  inputs: [{ name: "_owner", type: "address" }],
+  name: "balanceOf",
+  outputs: [{ name: "balance", type: "uint256" }],
+  type: "function",
+}];
+const ecr = [
+  { address: "0x96f9842De6E591C17d6e544Ff3419Bee5A4f26a3", symbol: "WQH" },
+  { address: "0x6b756F2199D9c8825d2C9526a298F73C621d8EBf", symbol: "FCW" }];
 
 let current_balance = 0.00;
 let current_invest = 0.00;
@@ -44,6 +57,37 @@ function init() {
 
 profile_btn.addEventListener("click", () => { window.location.href = `${url}/profile`; });
 logout_btn.addEventListener("click", () => { window.location.href = `${url}/logout`; });
+
+btn_eth.addEventListener("click", () => {
+  if (window.ethereum) {
+    console.log("MetaMask is installed!");
+    web3 = new Web3(window.ethereum);
+    ethereum.request({ method: "eth_requestAccounts" });
+    var account = web3.currentProvider.selectedAddress;
+    console.log(account);
+    web3.eth.getBalance(account)
+      .then((wei) => {
+        var eth = web3.utils.fromWei(wei, 'ether');
+        $("#token-amount").html("ETH: " + parseFloat(eth).toFixed(4));
+      });
+  }
+});
+
+btn_ecr.addEventListener("click", () => {
+  if (window.ethereum) {
+    console.log("MetaMask is installed!");
+    var web3 = new Web3(window.ethereum);
+    ethereum.request({ method: "eth_requestAccounts" });
+    var account = web3.currentProvider.selectedAddress;
+    console.log(account);
+    var tokenContract = new web3.eth.Contract(abi, qh_address);
+    tokenContract.methods.balanceOf(account).call()
+      .then((wei) => {
+        var qh = web3.utils.fromWei(wei);
+        $("#qh-amount").html("WQH: " + parseFloat(qh).toFixed(4));
+      });
+  }
+});
 
 // top up button control
 deposit_btn.addEventListener("click", () => {

@@ -34,6 +34,10 @@ body {
   color: white;
 }
 
+#eth_btn, #token_btn {
+  background-color: #92ccee;
+}
+
 #profile_btn:hover {
   background-color: #bbc09b;
 }
