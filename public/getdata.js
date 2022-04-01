@@ -1,10 +1,13 @@
 const url = "https://fintech-group4.herokuapp.com";  // live site
 // const url = "http://localhost:3000"; // for testing purpose only
+const profile_btn = document.getElementById("profile_btn");
+const logout_btn = document.getElementById("logout_btn");
 const account_balance = document.getElementById("account_balance");
 const investment = document.getElementById("investment");
 const deposit_btn = document.getElementById("deposit_btn");
 const buy_btn = document.getElementById("buy_btn");
 const sell_btn = document.getElementById("sell_btn");
+const list = document.getElementById("list");
 
 let current_balance = 0.00;
 let current_invest = 0.00;
@@ -31,19 +34,16 @@ function init() {
 
     if (data[0][0].amount != null) {
       data[0].forEach((datapoint) => {
-        let date = datapoint.transaction_date.substring(0, 10);
-        code += `<li>Date: ${date} | Amount Transacted: `;
-        code += (datapoint.type == 10) ? `-` : ``;
-        code += `$${datapoint.amount}</li>`;
+        addTransactionHistory(datapoint)
       });
     } else {
       code += `<li> No transaction made yet...</li>`;
     }
-    code += "</ul>";
-    $(".mypanel").html(code);
   });
-  
 }
+
+profile_btn.addEventListener("click", () => { window.location.href = `${url}/profile`; });
+logout_btn.addEventListener("click", () => { window.location.href = `${url}/logout`; });
 
 // top up button control
 deposit_btn.addEventListener("click", () => {
@@ -83,6 +83,24 @@ sell_btn.addEventListener("click", () => {
 
   init();
 });
+
+function addTransactionHistory(transaction) {
+  const transaction_item = document.createElement('li');
+
+  transaction_item.innerHTML = `${transaction.transaction_date.substring(0, 10)} || `;
+  if (transaction.type == 80) {
+    transaction_item.classList.add('plus');
+    transaction_item.innerHTML += `Top Up <span> $ ${Math.abs(transaction.amount)}</span>`;
+  } else if (transaction.type == 20) {
+    transaction_item.classList.add('plus');
+    transaction_item.innerHTML += `Sold <span> $ ${Math.abs(transaction.amount)}</span>`;
+  } else if (transaction.type == 10) {
+    transaction_item.classList.add('minus');
+    transaction_item.innerHTML += `Bought <span> -$ ${Math.abs(transaction.amount)}</span>`;
+  }
+
+  list.appendChild(transaction_item);
+}
 
 // function drawChart() {
 //   var data = google.visualization.arrayToDataTable([
